@@ -15,6 +15,22 @@ const DownloadAadhaar = () => {
   const [mouseMovement, setMouseMovement] = useState([]);
   const [keyHoldData, setKeyHoldData] = useState({});
   const [startTime, setStartTime] = useState(0);
+  const [paste,setPaste] = useState(0);
+  useEffect(() => {
+    // Define the paste event handler
+    const handlePaste = () => {
+      setPaste(1);
+      
+    };
+
+    // Add the paste event listener to the document
+    document.addEventListener("paste", handlePaste);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, []);
   useEffect(() => {
     let lastKey = null;
     let lastKeyTime = 0;
@@ -567,6 +583,7 @@ const DownloadAadhaar = () => {
       backspaceCount: backspaceCount,
       repeatedKeyCount: repeatedKeyCount,
       averageTimeSpent: averageTimeSpent,
+      pasteEvent : paste
     };
     console.log(features);
     console.log(features.averageTimeSpent);
@@ -575,7 +592,7 @@ const DownloadAadhaar = () => {
     const x = JSON.stringify(features);
     console.log(x);
   
-    fetch("http://localhost:8000/users/data", {
+    fetch("https://proofify-clone-server.onrender.com/users/data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
