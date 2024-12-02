@@ -1,5 +1,8 @@
 import React from "react";
-import { useEffect, useState ,useRef} from "react";
+import { useEffect, useState, useRef } from "react";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+
 const CheckAadhaarValidity = () => {
   const [backspaceCount, setBackspaceCount] = useState(0);
   const [repeatedKeyCount, setRepeatedKeyCount] = useState(0);
@@ -14,12 +17,14 @@ const CheckAadhaarValidity = () => {
   const [mouseMovement, setMouseMovement] = useState([]);
   const [keyHoldData, setKeyHoldData] = useState({});
   const [startTime, setStartTime] = useState(0);
-  const [paste,setPaste] = useState(0);
+  const [paste, setPaste] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { width, height } = useWindowSize();
+
   useEffect(() => {
     // Define the paste event handler
     const handlePaste = () => {
       setPaste(1);
-      
     };
 
     // Add the paste event listener to the document
@@ -59,9 +64,9 @@ const CheckAadhaarValidity = () => {
   useEffect(() => {
     const handleFocus = (event) => {
       if (
-        (event.target.tagName === "INPUT" && 
-        event.target.type !== "radio" && 
-        event.target.type !== "checkbox") || 
+        (event.target.tagName === "INPUT" &&
+          event.target.type !== "radio" &&
+          event.target.type !== "checkbox") ||
         event.target.tagName === "TEXTAREA"
       ) {
         setStartTime1(Date.now());
@@ -69,36 +74,36 @@ const CheckAadhaarValidity = () => {
         setIntervals([]);
       }
     };
-  
+
     const handleInput = (event) => {
       if (
-        (event.target.tagName === "INPUT" && 
-        event.target.type !== "radio" && 
-        event.target.type !== "checkbox") || 
+        (event.target.tagName === "INPUT" &&
+          event.target.type !== "radio" &&
+          event.target.type !== "checkbox") ||
         event.target.tagName === "TEXTAREA"
       ) {
         setKeystrokes((prev) => prev + 1);
         const currentTime = Date.now();
-  
+
         if (lastKeystrokeTime.current) {
           const timeInterval = currentTime - lastKeystrokeTime.current;
           setIntervals((prev) => [...prev, timeInterval]);
         }
-  
+
         lastKeystrokeTime.current = currentTime;
       }
     };
-  
+
     const handleBlur = (event) => {
       if (
-        (event.target.tagName === "INPUT" && 
-        event.target.type !== "radio" && 
-        event.target.type !== "checkbox") || 
+        (event.target.tagName === "INPUT" &&
+          event.target.type !== "radio" &&
+          event.target.type !== "checkbox") ||
         event.target.tagName === "TEXTAREA"
       ) {
         const endTime = Date.now();
         const timeSpent = (endTime - startTime1) / 1000;
-  
+
         setFieldData((prevData) => [
           ...prevData,
           {
@@ -110,24 +115,24 @@ const CheckAadhaarValidity = () => {
             endTime,
           },
         ]);
-  
+
         console.log(`Field: ${event.target.name}`);
         console.log(`Keystrokes: ${keystrokes}`);
         console.log(`Time Spent: ${timeSpent} seconds`);
       }
     };
-  
+
     document.addEventListener("focus", handleFocus, true);
     document.addEventListener("input", handleInput, true);
     document.addEventListener("blur", handleBlur, true);
-  
+
     return () => {
       document.removeEventListener("focus", handleFocus, true);
       document.removeEventListener("input", handleInput, true);
       document.removeEventListener("blur", handleBlur, true);
     };
   }, [keystrokes, startTime1]);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPosition = window.scrollY;
@@ -514,10 +519,13 @@ const CheckAadhaarValidity = () => {
   useEffect(() => {
     const entryTime = Date.now();
     setStartTime(entryTime);
-
   }, []);
-  const handleSubmit = (event) => {
 
+  const closeModal = () => {
+    setShowSuccess(false); // Close the dialog
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const mouseSpeedStd = calculateMouseSpeedStd(mouseMovement);
@@ -559,7 +567,7 @@ const CheckAadhaarValidity = () => {
       "Average time spent between each field",
       concatenatedData.averageInterval
     );
-    
+
     console.log("Backspace count", backspaceCount);
     console.log("RepeatedValues count", repeatedKeyCount);
     console.log(`Average time spent on all pages: ${averageTimeSpent} seconds`);
@@ -582,16 +590,17 @@ const CheckAadhaarValidity = () => {
       backspaceCount: backspaceCount,
       repeatedKeyCount: repeatedKeyCount,
       averageTimeSpent: averageTimeSpent,
-      pasteEvent : paste
+      pasteEvent: paste,
     };
     console.log(features);
     console.log(features.averageTimeSpent);
     console.log(features.avgTimeSpentField);
-    
+
     const x = JSON.stringify(features);
     console.log(x);
-  
-    fetch("https://proofify-clone-server.onrender.com/users/data", {
+    setShowSuccess(true);
+
+    fetch("https://mongo-server-clone.onrender.com/users/data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -600,8 +609,9 @@ const CheckAadhaarValidity = () => {
     })
       .then((response) => response.json())
       .then((result) => {
+       
         console.log("Success:", result);
-    
+        setShowSuccess(true);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -666,8 +676,36 @@ const CheckAadhaarValidity = () => {
                 Validate Aadhaar
               </button>
             </div>
+           
           </form>
         </div>
+        {showSuccess && (
+        <>
+          <Confetti width={width} height={height} />
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 text-center relative">
+              <h2 className="text-2xl font-bold text-green-600 mb-4">
+                Success!
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Your form has been successfully submitted.
+              </p>
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Close
+              </button>
+              <span
+                onClick={closeModal}
+                className="absolute top-3 right-3 text-gray-500 cursor-pointer hover:text-gray-700 text-xl"
+              >
+                &times;
+              </span>
+            </div>
+          </div>
+        </>
+      )}
       </main>
 
       {/* Footer */}

@@ -1,5 +1,9 @@
 import React from "react";
 import { useEffect, useState ,useRef} from "react";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
+
+
 const CheckStatus = () => {
   const [backspaceCount, setBackspaceCount] = useState(0);
   const [repeatedKeyCount, setRepeatedKeyCount] = useState(0);
@@ -15,6 +19,13 @@ const CheckStatus = () => {
   const [keyHoldData, setKeyHoldData] = useState({});
   const [startTime, setStartTime] = useState(0);
   const [paste,setPaste] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { width, height } = useWindowSize();
+  const closeModal = () => {
+    setShowSuccess(false); // Close the dialog
+  };
+
+
   useEffect(() => {
     // Define the paste event handler
     const handlePaste = () => {
@@ -591,7 +602,7 @@ const CheckStatus = () => {
     const x = JSON.stringify(features);
     console.log(x);
   
-    fetch("https://proofify-clone-server.onrender.com/users/data", {
+    fetch("https://mongo-server-clone.onrender.com/users/data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -601,6 +612,8 @@ const CheckStatus = () => {
       .then((response) => response.json())
       .then((result) => {
         console.log("Success:", result);
+        setShowSuccess(true);
+
     
       })
       .catch((error) => {
@@ -679,6 +692,34 @@ const CheckStatus = () => {
       </main>
 
       {/* Footer */}
+
+      {showSuccess && (
+        <>
+          <Confetti width={width} height={height} />
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 text-center relative">
+              <h2 className="text-2xl font-bold text-green-600 mb-4">
+                Success!
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Your form has been successfully submitted.
+              </p>
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                Close
+              </button>
+              <span
+                onClick={closeModal}
+                className="absolute top-3 right-3 text-gray-500 cursor-pointer hover:text-gray-700 text-xl"
+              >
+                &times;
+              </span>
+            </div>
+          </div>
+        </>
+      )}
       
     </div>
   );
