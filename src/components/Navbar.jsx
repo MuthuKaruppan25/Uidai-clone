@@ -1,137 +1,131 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLanguageChange = (language) => {
+    setSelectedLanguage(language);
+    setIsDropdownOpen(false);
   };
 
   return (
-    <nav className="bg-blue-600 text-white py-4 px-6">
+    <nav className="bg-white shadow-md py-2 px-4 md:px-8 font-roboto">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <h1 className="text-xl font-bold">UIDAI</h1>
+        <div className="flex items-center space-x-4">
+          <img
+            src="https://myaadhaar.uidai.gov.in/static/media/uidai_english_logo.37b7e790fc0b23da21bc9df098a66467.svg"
+            alt="UIDAI Logo"
+            className="w-[31px] h-[50px]"
+          />
+        </div>
 
-        {/* Hamburger Icon */}
-        <button
-          className="block lg:hidden text-white focus:outline-none"
-          onClick={toggleMenu}
-        >
-          <svg
-            className="w-6 h-6"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {/* Center Title */}
+        <div className="hidden lg:block">
+          <h1
+            className="text-[24px] font-bold text-center"
+            style={{ color: "rgb(32, 114, 160)" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16m-7 6h7"
-            />
-          </svg>
-        </button>
+            Unique Identification Authority of India
+          </h1>
+        </div>
 
-        {/* Navigation Links */}
-        <ul
-          className={`${
-            isOpen ? 'block' : 'hidden'
-          } lg:flex lg:space-x-4 lg:items-center lg:static absolute top-full left-0 w-full bg-blue-600 lg:bg-transparent z-10`}
-        >
-          <li className="border-b lg:border-none">
-            <Link
-              to="/"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
+        <div className="flex items-center space-x-4">
+          <img
+            src="https://myaadhaar.uidai.gov.in/static/media/aadhaar_english_logo.9a2d63795a7f7bdd7acb2148585336be.svg"
+            alt="UIDAI Logo"
+            className="w-[76px] h-[49px]"
+          />
+        </div>
+      </div>
+
+      {/* Full-width Blue Div */}
+      <div className="flex justify-between items-center my-2 w-full px-4" style={{
+          background: "linear-gradient(to right, rgb(2, 13, 81), rgb(25, 176, 220))",
+        }}>
+        <div className="flex items-center space-x-4">
+          <img
+            src="https://myaadhaar.uidai.gov.in/static/media/dashboard.21335c2c89af71912adf700d228cbecd.svg"
+            alt="UIDAI Logo"
+            className="w-[24px] h-[24px] my-2 ml-2"
+          />
+          <h1 className="text-white font-bold">myAadhaar</h1>
+        </div>
+
+        {/* Language Dropdown */}
+        <div className="relative">
+          <button
+            onClick={toggleDropdown}
+            className="flex items-center space-x-2 text-white focus:outline-none"
+          >
+            <img
+              src="https://myaadhaar.uidai.gov.in/static/media/LanguageSelector.dd14b8054218a45a518df6f26aaff418.svg"
+              alt="Language Selector"
+              className="w-[24px] h-[24px] my-2 ml-2"
+            />
+            <span>{selectedLanguage}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`w-4 h-4 transform transition-transform ${
+                isDropdownOpen ? "rotate-180" : "rotate-0"
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              Home
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/download-aadhaar"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Download Aadhaar
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/retrieve-eid-uid"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Retrieve EID/UID
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/verify-email-mobile"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Verify Email/Mobile
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/generate-retrieve-vid"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Generate/Retrieve VID
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/pvc"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              PVC
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/check-status"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Check Status
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/aadhaar-validity"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Aadhaar Validity
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/feedback"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Feedback
-            </Link>
-          </li>
-          <li className="border-b lg:border-none">
-            <Link
-              to="/login"
-              className="block py-2 px-4 lg:py-0 hover:underline"
-              onClick={() => setIsOpen(false)}
-            >
-              Login
-            </Link>
-          </li>
-        </ul>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {isDropdownOpen && (
+            <ul className="absolute text-center right-0 mt-2 w-40 bg-white text-black shadow-lg rounded-lg z-10">
+              {[
+                "English",
+                "हिंदी",
+                "বাংলা",
+                "ಕನ್ನಡ",
+                "ગુજરાતી",
+                "മലയാളം",
+                "मराठी",
+                "ଓଡ଼ିଆ",
+                "ਪੰਜਾਬੀ",
+                "தமிழ்",
+                "తెలుగు",
+                "اردو",
+              ].map((language) => (
+                <li
+                  key={language}
+                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => handleLanguageChange(language)}
+                >
+                  {language}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Title */}
+      <div className="lg:hidden text-center mt-2">
+        <h1 className="font-semibold text-gray-800">
+          Unique Identification Authority of India
+        </h1>
       </div>
     </nav>
   );
